@@ -95,7 +95,7 @@ class User private constructor(
 
     fun changePassword(oldPass: String, newPass: String) {
         if (checkPassword(oldPass)) passwordHash = encrypt(newPass)
-        else IllegalArgumentException("The entered password does not match the current password")
+        else throw IllegalArgumentException("The entered password does not match the current password")
     }
 
     private fun encrypt(password: String): String = salt.plus(password).md5()
@@ -161,11 +161,11 @@ class User private constructor(
         private fun String.checkPhone(): String? {
             val checked = this == null
                     || (this[0] == '+'
-                        && this.length == 12
-                        && !this.contains("[^+\\d]".toRegex())
+                        && this?.replace("[^+\\d]".toRegex(), "").length == 12
+                        && this.replace("[\\W\\d]".toRegex(), "").isEmpty()
                     )
 
-            if (!checked) IllegalArgumentException("Enter a valid phone number starting with a + and containing 11 digits")
+            if (!checked) throw IllegalArgumentException("Enter a valid phone number starting with a + and containing 11 digits")
 
             return this?.replace("[^+\\d]".toRegex(), "")
 

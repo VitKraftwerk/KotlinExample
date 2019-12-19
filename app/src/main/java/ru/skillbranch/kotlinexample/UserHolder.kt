@@ -9,7 +9,7 @@ object UserHolder {
         return User.makeUser(fullName, email, password)
             .also {user ->
                 if(map.containsKey(user.login))
-                    throw IllegalArgumentException("A user with this email already exists")
+                    throw IllegalArgumentException("A user with this login already exists")
                 map[user.login] = user
             }
     }
@@ -18,7 +18,7 @@ object UserHolder {
         return User.makeUser(fullName, rawPhone = rawPhone)
             .also {user ->
                 if(map.containsKey(user.login))
-                    throw IllegalArgumentException("A user with this email already exists")
+                    throw IllegalArgumentException("A user with this login already exists")
                 map[user.login] = user
             }
     }
