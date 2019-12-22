@@ -25,9 +25,6 @@ class User private constructor(
             .joinToString(" ")
 
     private var phone: String? = null
-//        set(value) {
-//            field = value?.replace("[^+\\d]".toRegex(), "")
-//        }
 
     private var _login: String? = null
     var login: String
@@ -36,9 +33,22 @@ class User private constructor(
         }
         get() = _login!!
 
-    private val salt: String by lazy {
-        ByteArray(16).also { SecureRandom().nextBytes(it) }.toString()
-    }
+    //    private var _salt: String by lazy {
+//        ByteArray(16).also { SecureRandom().nextBytes(it) }.toString()
+//    }
+    private var _salt: String? = null
+    private var salt: String
+        set(value) {
+            _salt = value
+        }
+        get() {
+            if(_salt.isNullOrBlank()){
+                _salt = ByteArray(16).also { SecureRandom().nextBytes(it) }.toString()
+            }
+            return _salt!!
+        }
+
+
     private lateinit var passwordHash: String
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
@@ -55,6 +65,27 @@ class User private constructor(
         passwordHash = encrypt(password)
     }
 
+    constructor(
+        firstName: String,
+        lastName: String?,
+        email: String?,
+        salt: String?,
+        hash: String?,
+        rawPhone: String?
+    ) : this(
+        firstName,
+        lastName,
+        email = email,
+        rawPhone = rawPhone,
+        meta = mapOf("src" to "csv")
+    ) {
+        println("Secondary constructor")
+        if (!hash.isNullOrBlank() && !salt.isNullOrBlank()) {
+            passwordHash = hash
+            this.salt = salt
+        }
+    }
+
 
     constructor(
         firstName: String,
@@ -66,7 +97,7 @@ class User private constructor(
         passwordHash = encrypt(code)
         accessCode = code
 
-        sendAccessCodeToUser(rawPhone?.checkPhone(), code)
+        sendAccessCodeToUser(phone, code)
     }
 
 
@@ -96,6 +127,12 @@ class User private constructor(
     fun changePassword(oldPass: String, newPass: String) {
         if (checkPassword(oldPass)) passwordHash = encrypt(newPass)
         else throw IllegalArgumentException("The entered password does not match the current password")
+    }
+
+    fun requestAccessCode() {
+        val code = generateAccessCode()
+        passwordHash = encrypt(code)
+        accessCode = code
     }
 
     private fun encrypt(password: String): String = salt.plus(password).md5()
@@ -143,6 +180,26 @@ class User private constructor(
             }
         }
 
+        fun makeUserFromCsv(
+            fullName: String,
+            email: String? = null,
+            salt: String? = null,
+            hash: String? = null,
+            rawPhone: String? = null
+        ): User {
+            val (firstName, lastName) = fullName.fullNameToPair()
+
+            return User(
+                firstName,
+                lastName,
+                email,
+                salt,
+                hash,
+                rawPhone
+            )
+        }
+
+
         private fun String.fullNameToPair(): Pair<String, String?> {
             return this.split(" ")
                 .filter { it.isNotBlank() }
@@ -159,11 +216,10 @@ class User private constructor(
         }
 
         private fun String.checkPhone(): String? {
-            val checked = this == null
-                    || (this[0] == '+'
-                        && this?.replace("[^+\\d]".toRegex(), "").length == 12
-                        && this.replace("[\\W\\d]".toRegex(), "").isEmpty()
-                    )
+            val checked = !this.isNullOrBlank()
+                    && this[0] == '+'
+                    && this?.replace("[^+\\d]".toRegex(), "").length == 12
+                    && this.replace("[\\W\\d]".toRegex(), "").isEmpty()
 
             if (!checked) throw IllegalArgumentException("Enter a valid phone number starting with a + and containing 11 digits")
 

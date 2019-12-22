@@ -3,6 +3,7 @@ package ru.skillbranch.kotlinexample
 import org.junit.After
 import org.junit.Assert
 import org.junit.Test
+import ru.skillbranch.kotlinexample.extensions.dropLastUntil
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -136,7 +137,7 @@ class ExampleUnitTest {
             meta: {auth=sms}
         """.trimIndent()
 
-        val successResult =  holder.loginUser("+7 (917) 971-11-11", user.accessCode!!)
+        val successResult =  holder.loginUser("+79179711111", user.accessCode!!)
 
         Assert.assertEquals(expectedInfo, successResult)
     }
@@ -161,27 +162,57 @@ class ExampleUnitTest {
         Assert.assertNull(failResult)
     }
 
-//    @Test
-//    fun request_access_code() {
-//        val holder = UserHolder
-//        val user = holder.registerUserByPhone("John Doe", "+7 (917) 971-11-11")
-//        val oldAccess = user.accessCode
-//        holder.requestAccessCode("+7 (917) 971-11-11")
-//
-//        val expectedInfo = """
-//            firstName: John
-//            lastName: Doe
-//            login: +79179711111
-//            fullName: John Doe
-//            initials: J D
-//            email: null
-//            phone: +79179711111
-//            meta: {auth=sms}
-//        """.trimIndent()
-//
-//        val successResult =  holder.loginUser("+7 (917) 971-11-11", user.accessCode!!)
-//
-//        Assert.assertNotEquals(oldAccess, user.accessCode!!)
-//        Assert.assertEquals(expectedInfo, successResult)
-//    }
+    @Test
+    fun request_access_code() {
+        val holder = UserHolder
+        val user = holder.registerUserByPhone("John Doe", "+7 (917) 971-11-11")
+        val oldAccess = user.accessCode
+        holder.requestAccessCode("+79179711111")
+
+        val expectedInfo = """
+            firstName: John
+            lastName: Doe
+            login: +79179711111
+            fullName: John Doe
+            initials: J D
+            email: null
+            phone: +79179711111
+            meta: {auth=sms}
+        """.trimIndent()
+
+        val successResult =  holder.loginUser("+79179711111", user.accessCode!!)
+
+        Assert.assertNotEquals(oldAccess, user.accessCode!!)
+        Assert.assertEquals(expectedInfo, successResult)
+    }
+
+    @Test
+    fun login_user_by_csv_success() {
+        val holder = UserHolder
+        holder.importUsers(listOf(" John Doe ;JohnDoe@unknow.com;[B@149494d8:eda4971291bedebd486eab71f37009be;;"))
+        val expectedInfo = """
+            firstName: John
+            lastName: Doe
+            login: johndoe@unknow.com
+            fullName: John Doe
+            initials: J D
+            email: JohnDoe@unknow.com
+            phone: null
+            meta: {src=csv}
+        """.trimIndent()
+
+        val successResult =  holder.loginUser("johndoe@unknow.com", "testPass")
+
+        Assert.assertEquals(expectedInfo, successResult)
+    }
+
+    @Test
+    fun drop_last() {
+        val i = listOf(1, 2, 3).dropLastUntil{x -> x == 2}
+        Assert.assertEquals(listOf(1), i)
+
+        val s = "House Nymeros Martell of Sunspear".split(" ").dropLastUntil{ it == "of" }
+        Assert.assertEquals(listOf("House", "Nymeros", "Martell"), s)
+
+    }
 }
