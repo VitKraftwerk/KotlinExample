@@ -43,7 +43,14 @@ object UserHolder {
 
     fun loginUser(login: String, password: String): String? {
         println("loginUser(login: $login, password: $password)")
-        return map[login.toLowerCase().trim()]?.run {
+        var l: String? = null
+        try{
+            l = login.checkPhone()
+        } catch (e: java.lang.IllegalArgumentException) {
+            l = login.toLowerCase().trim()
+        }
+
+        return map[l]?.run {
             if (checkPassword(password)) this.userInfo
             else null
         }

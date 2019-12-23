@@ -165,9 +165,11 @@ class ExampleUnitTest {
     @Test
     fun request_access_code() {
         val holder = UserHolder
-        val user = holder.registerUserByPhone("John Doe", "+7 (917) 971-11-11")
+        val user = holder.registerUserByPhone("John Doe", "+7 (917) 971-22-22")
         val oldAccess = user.accessCode
-        holder.requestAccessCode("+79179711111")
+
+        holder.requestAccessCode("+7 (917) 971-22-22")
+//        holder.requestAccessCode("+79179711111")
 
         val expectedInfo = """
             firstName: John
@@ -180,7 +182,7 @@ class ExampleUnitTest {
             meta: {auth=sms}
         """.trimIndent()
 
-        val successResult =  holder.loginUser("+79179711111", user.accessCode!!)
+        val successResult =  holder.loginUser("+7 (917) 971-22-22", user.accessCode!!)
 
         Assert.assertNotEquals(oldAccess, user.accessCode!!)
         Assert.assertEquals(expectedInfo, successResult)
