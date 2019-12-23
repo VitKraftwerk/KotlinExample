@@ -54,9 +54,10 @@ object UserHolder {
     fun importUsers(list: List<String>): List<User> {
         val users = mutableListOf<User>()
 
+        if (!list.isEmpty()) throw Exception("List is $list")
         list.forEach {
             val data = it.splitIgnoreEmpty(";")
-
+            if(data.size < 3) throw Exception("List has wrong format: $it")
             val creds = data[2]?.split(":")
             registerUserByLoginCsv(
                 data[0]!!.trim(),
