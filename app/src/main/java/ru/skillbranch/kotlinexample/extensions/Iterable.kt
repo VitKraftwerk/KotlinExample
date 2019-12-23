@@ -8,3 +8,15 @@ fun <T> List<T>.dropLastUntil(predicate: (T) -> Boolean): List<T> {
     }
     return res
 }
+
+fun String.checkPhone(): String? {
+    val checked = !this.isNullOrBlank()
+            && this[0] == '+'
+            && this?.replace("[^+\\d]".toRegex(), "").length == 12
+            && this.replace("[\\W\\d]".toRegex(), "").isEmpty()
+
+    if (!checked) throw IllegalArgumentException("Enter a valid phone number starting with a + and containing 11 digits")
+
+    return this?.replace("[^+\\d]".toRegex(), "")
+
+}

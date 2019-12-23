@@ -1,6 +1,7 @@
 package ru.skillbranch.kotlinexample
 
 import androidx.annotation.VisibleForTesting
+import ru.skillbranch.kotlinexample.extensions.checkPhone
 
 object UserHolder {
     private val map = mutableMapOf<String, User>()
@@ -49,7 +50,8 @@ object UserHolder {
     }
 
     fun requestAccessCode(login: String): Unit {
-        map[login.trim()]?.requestAccessCode()
+        println("requestAccessCode(login: $login)")
+        map[login.checkPhone()]?.requestAccessCode()
     }
 
     //    Полное имя пользователя; email; соль:хеш пароля; телефон

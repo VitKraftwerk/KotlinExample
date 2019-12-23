@@ -1,6 +1,7 @@
 package ru.skillbranch.kotlinexample
 
 import androidx.annotation.VisibleForTesting
+import ru.skillbranch.kotlinexample.extensions.checkPhone
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.security.SecureRandom
@@ -215,18 +216,6 @@ class User private constructor(
                         )
                     }
                 }
-        }
-
-        private fun String.checkPhone(): String? {
-            val checked = !this.isNullOrBlank()
-                    && this[0] == '+'
-                    && this?.replace("[^+\\d]".toRegex(), "").length == 12
-                    && this.replace("[\\W\\d]".toRegex(), "").isEmpty()
-
-            if (!checked) throw IllegalArgumentException("Enter a valid phone number starting with a + and containing 11 digits")
-
-            return this?.replace("[^+\\d]".toRegex(), "")
-
         }
     }
 }

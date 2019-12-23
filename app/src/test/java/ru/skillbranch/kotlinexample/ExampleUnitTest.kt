@@ -66,7 +66,7 @@ class ExampleUnitTest {
     @Test
     fun register_user_by_phone_success() {
         val holder = UserHolder
-        val user = holder.registerUserByPhone("John Doe", "+7 (917) 971 11-11")
+        val user = holder.registerUserByPhone("John Doe", "+7 (917) 971-22-22")
         val expectedInfo = """
             firstName: John
             lastName: Doe
@@ -189,19 +189,19 @@ class ExampleUnitTest {
     @Test
     fun login_user_by_csv_success() {
         val holder = UserHolder
-        holder.importUsers(listOf(" John Doe ;JohnDoe@unknow.com;[B@149494d8:eda4971291bedebd486eab71f37009be;;"))
+        holder.importUsers(listOf("John Doe ;JohnDoe@yandex.ru;[B@7591083d:c6adb4becdc64e92857e1e2a0fd6af84;;"," John;;[B@77a567e1:a07e337973f9ab704118c73ff827a695;+7 (911) 971-11-11;"))
         val expectedInfo = """
             firstName: John
             lastName: Doe
-            login: johndoe@unknow.com
+            login: johndoe@yandex.ru
             fullName: John Doe
             initials: J D
-            email: JohnDoe@unknow.com
+            email: johndoe@yandex.ru
             phone: null
             meta: {src=csv}
         """.trimIndent()
 
-        val successResult =  holder.loginUser("johndoe@unknow.com", "testPass")
+        val successResult =  holder.loginUser("JohnDoe@yandex.ru", "testPass")
 
         Assert.assertEquals(expectedInfo, successResult)
     }
