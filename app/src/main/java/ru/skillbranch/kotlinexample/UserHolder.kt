@@ -69,12 +69,13 @@ object UserHolder {
         list.forEach {
             val data = it.splitIgnoreEmpty(";")
             val creds = data[2]?.split(":")
-            registerUserByLoginCsv(
+            users.add(registerUserByLoginCsv(
                 data[0]!!.trim(),
                 data[1]?.trim(),
                 creds?.get(0)?.trim(),
                 creds?.get(1)?.trim(),
                 data[3]?.trim()
+                )
             )
 
         }

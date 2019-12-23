@@ -191,21 +191,23 @@ class ExampleUnitTest {
     @Test
     fun login_user_by_csv_success() {
         val holder = UserHolder
-        holder.importUsers(listOf("John Doe ;JohnDoe@yandex.ru;[B@7591083d:c6adb4becdc64e92857e1e2a0fd6af84;;"," John;;[B@77a567e1:a07e337973f9ab704118c73ff827a695;+7 (911) 971-11-11;"))
+        val list = holder.importUsers(listOf("John Doe ;JohnDoe@yandex.ru;[B@7591083d:c6adb4becdc64e92857e1e2a0fd6af84;;"," John;;[B@77a567e1:a07e337973f9ab704118c73ff827a695;+7 (911) 971-11-11;"))
         val expectedInfo = """
             firstName: John
             lastName: Doe
             login: johndoe@yandex.ru
             fullName: John Doe
             initials: J D
-            email: johndoe@yandex.ru
+            email: JohnDoe@yandex.ru
             phone: null
             meta: {src=csv}
         """.trimIndent()
 
-        val successResult =  holder.loginUser("JohnDoe@yandex.ru", "testPass")
+        holder.loginUser(" JohnDoe@gmail.ru", "test")
+        val successResult =  holder.loginUser("johndoe@yandex.ru", "testPass")
 
         Assert.assertEquals(expectedInfo, successResult)
+        Assert.assertEquals(2, list.size)
     }
 
     @Test
