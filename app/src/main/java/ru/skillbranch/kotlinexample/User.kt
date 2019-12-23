@@ -130,9 +130,11 @@ class User private constructor(
     }
 
     fun requestAccessCode() {
+        println("requestAccessCode()")
         val code = generateAccessCode()
         passwordHash = encrypt(code)
         accessCode = code
+        println("generated code: $code")
     }
 
     private fun encrypt(password: String): String = salt.plus(password).md5()
