@@ -6,6 +6,7 @@ object UserHolder {
     private val map = mutableMapOf<String, User>()
 
     fun registerUser(fullName: String, email: String, password: String): User {
+        println("registerUser(fullName: $fullName, email: $email, password: $password)")
         return User.makeUser(fullName, email, password)
             .also { user ->
                 if (map.containsKey(user.login))
@@ -30,6 +31,7 @@ object UserHolder {
     }
 
     fun registerUserByPhone(fullName: String, rawPhone: String): User {
+        println("registerUserByPhone(fullName: $fullName, rawPhone: $rawPhone)")
         return User.makeUser(fullName, rawPhone = rawPhone)
             .also { user ->
                 if (map.containsKey(user.login))
@@ -39,6 +41,7 @@ object UserHolder {
     }
 
     fun loginUser(login: String, password: String): String? {
+        println("loginUser(login: $login, password: $password)")
         return map[login.trim()]?.run {
             if (checkPassword(password)) this.userInfo
             else null
@@ -54,10 +57,8 @@ object UserHolder {
     fun importUsers(list: List<String>): List<User> {
         val users = mutableListOf<User>()
 
-        if (!list.isEmpty()) throw Exception("List is $list")
         list.forEach {
             val data = it.splitIgnoreEmpty(";")
-            if(data.size < 3) throw Exception("List has wrong format: $it")
             val creds = data[2]?.split(":")
             registerUserByLoginCsv(
                 data[0]!!.trim(),

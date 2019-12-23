@@ -61,7 +61,7 @@ class User private constructor(
         email: String,
         password: String
     ) : this(firstName, lastName, email = email, meta = mapOf("auth" to "password")) {
-        println("Secondary constructor")
+        println("constructor(firstName: $firstName, lastName: $lastName, email: $email, password: $password)")
         passwordHash = encrypt(password)
     }
 
@@ -79,7 +79,7 @@ class User private constructor(
         rawPhone = rawPhone,
         meta = mapOf("src" to "csv")
     ) {
-        println("Secondary constructor")
+        println("constructor(firstName: $firstName, lastName: $lastName, email: $email, salt: $salt, hash: $hash, rawPhone: $rawPhone)")
         if (!hash.isNullOrBlank() && !salt.isNullOrBlank()) {
             passwordHash = hash
             this.salt = salt
@@ -92,7 +92,7 @@ class User private constructor(
         lastName: String?,
         rawPhone: String
     ) : this(firstName, lastName, rawPhone = rawPhone, meta = mapOf("auth" to "sms")) {
-        println("Secondary constructor")
+        println("constructor(firstName: $firstName, $lastName: lastName, rawPhone: $rawPhone)")
         val code = generateAccessCode()
         passwordHash = encrypt(code)
         accessCode = code
