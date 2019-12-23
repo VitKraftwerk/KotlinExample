@@ -42,7 +42,7 @@ object UserHolder {
 
     fun loginUser(login: String, password: String): String? {
         println("loginUser(login: $login, password: $password)")
-        return map[login.trim()]?.run {
+        return map[login.toLowerCase().trim()]?.run {
             if (checkPassword(password)) this.userInfo
             else null
         }
